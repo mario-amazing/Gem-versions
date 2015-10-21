@@ -3,10 +3,21 @@ require 'mechanize'
 # parse rubygems.org
 module Gemfiler
   class Versions
-    def gem_versions_all(gem_name)
+    URL_FORMAT = "https://rubygems.org/gems/%s/versions"
+
+    def initialize(params)
+      @params = params
+      @gem_name = @params[:gem_name]
+    end
+
+    def to_s
+      @versions ||= fetch_versions
+    end
+
+    def fetch_versions
       agent = Mechanize.new
       versions = []
-      work_link = agent.get("https://rubygems.org/gems/#{gem_name}/versions")
+      work_link = agent.get(format(URL_FORMAT, @gem_name))
       (work_link / '.t-list__item').each do |version|
         versions << Gem::Version.new(version.children.to_s)
       end
@@ -16,9 +27,9 @@ module Gemfiler
       exit
     end
 
-    def display_versions(ver_all, ver_gem = [])
+    def display_versions
       case
-      when ver_gem[0] == '~>'
+      when @versions[:sign] == '~>'
         ver_all.each do |ver|
           if ver == ver_gem[1]
             puts ver.to_s.red
