@@ -6,7 +6,7 @@ module Gemfiler
     end
 
     def parse
-      if @argv.first.nil? || !(ARGV.first =~ /[^-A-z]/).nil?
+      if @argv.first.nil? || !(@argv.first =~ /[^-A-z]/).nil?
         puts 'You missed the name of gem or used invalid characters.Try again.'
         puts 'Usage: gemver.rb [gem name] [gem version]*'
         puts '* - optional params, in a format compatible with Gemfile'
