@@ -1,17 +1,28 @@
 require 'mechanize'
-
 # parse rubygems.org
 module Gemfiler
   class Versions
     URL_FORMAT = "https://rubygems.org/gems/%s/versions"
+    COMPARATORS = {
+      '~>' => proc { |first, second| first == second },
+      '>=' => proc { |first, second| first >= second },
+      '<' => proc { |first, second| first < second },
+    }
 
     def initialize(params)
-      @params = params
-      @gem_name = @params[:gem_name]
+      @conditions = params[:conditions]
+      @gem_name = params[:gem_name]
     end
 
     def to_s
       @versions ||= fetch_versions
+      @versions.each do |ver|
+        if @conditions.any? { |condition| !COMPARATORS[condition[:sign]].call(ver, condition[:ver])}
+          # drow red
+        else
+          # drow green
+        end
+      end
     end
 
     def fetch_versions
