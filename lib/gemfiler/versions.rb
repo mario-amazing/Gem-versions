@@ -23,8 +23,8 @@ module Gemfiler
     def to_s
       @versions ||= fetch_versions
       @versions.map do |ver|
-        condition_fail = @conditions.any? do |condition|
-          !COMPARATORS[condition[:sign]].call(ver, condition[:ver])
+        condition_fail = @conditions.all? do |condition|
+          COMPARATORS[condition[:sign]].call(ver, condition[:ver])
         end
         if condition_fail
           "#{ver}".colorize(:red)
