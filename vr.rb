@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
-require 'Gemfiler'
+require_relative 'lib/gemfiler'
+require 'gemfiler'
 
 args = Gemfiler::Args.new
 ver = Gemfiler::Versions.new
