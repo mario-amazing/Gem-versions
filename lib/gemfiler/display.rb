@@ -1,3 +1,5 @@
+require 'colorize'
+
 # display versions
 module Gemfiler
   class Display

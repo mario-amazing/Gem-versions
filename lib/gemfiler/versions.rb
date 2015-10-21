@@ -1,3 +1,5 @@
+require 'mechanize'
+
 # parse rubygems.org
 module Gemfiler
   class Versions
