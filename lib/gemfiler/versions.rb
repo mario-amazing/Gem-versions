@@ -1,26 +1,35 @@
 require 'mechanize'
+require 'colorize'
+
 # parse rubygems.org
 module Gemfiler
   class Versions
-    URL_FORMAT = "https://rubygems.org/gems/%s/versions"
+    URL_FORMAT = 'https://rubygems.org/gems/%s/versions'
     COMPARATORS = {
       '~>' => proc { |first, second| first == second },
       '>=' => proc { |first, second| first >= second },
-      '<' => proc { |first, second| first < second },
+      '<' => proc { |first, second| first < second }
     }
 
     def initialize(params)
       @conditions = params[:conditions]
       @gem_name = params[:gem_name]
+      @conditions.map! do |condition|
+        condition[:ver] = Gem::Version.new(condition[:ver])
+        condition
+      end
     end
 
     def to_s
       @versions ||= fetch_versions
-      @versions.each do |ver|
-        if @conditions.any? { |condition| !COMPARATORS[condition[:sign]].call(ver, condition[:ver])}
-          # drow red
+      @versions.map do |ver|
+        condition_fail = @conditions.any? do |condition|
+          !COMPARATORS[condition[:sign]].call(ver, condition[:ver])
+        end
+        if condition_fail
+          "#{ver}".colorize(:red)
         else
-          # drow green
+          "#{ver}".colorize(:green)
         end
       end
     end
@@ -36,37 +45,6 @@ module Gemfiler
     rescue
       puts 'Gem not found or unable to connect to the internet.Try again.'
       exit
-    end
-
-    def display_versions
-      case
-      when @versions[:sign] == '~>'
-        ver_all.each do |ver|
-          if ver == ver_gem[1]
-            puts ver.to_s.red
-          else
-            puts ver.to_s.green
-          end
-        end
-      when ver_gem[0] == '>=' && ver_gem[2].nil?
-        ver_all.each do |ver|
-          if ver >= ver_gem[1]
-            puts ver.to_s.red
-          else
-            puts ver.to_s.green
-          end
-        end
-      when ver_gem[0] == '>=' && ver_gem[2] == '<'
-        ver_all.each do |ver|
-          if ver >= ver_gem[1] && ver < ver_gem[3]
-            puts ver.to_s.red
-          else
-            puts ver.to_s.green
-          end
-        end
-      else
-        ver_all.each { |ver| puts ver.to_s.green }
-      end
     end
   end
 end

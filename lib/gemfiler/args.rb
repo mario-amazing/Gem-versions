@@ -9,7 +9,7 @@ module Gemfiler
     end
 
     def parse
-      gem_name = @argv.shift.downcase
+      gem_name = @argv.shift
       conditions = []
       @argv.each do |condition|
         sign, ver = condition.squeeze(' ').split(' ')
