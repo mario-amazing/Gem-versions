@@ -5,7 +5,7 @@ module Gemfiler
       @argv = argv
     end
 
-    def parse
+    def gem_name
       if @argv.first.nil? || !(@argv.first =~ /[^-A-z]/).nil?
         puts 'You missed the name of gem or used invalid characters.Try again.'
         puts 'Usage: gemver.rb [gem name] [gem version]*'
@@ -16,7 +16,7 @@ module Gemfiler
       end
     end
 
-    def gem_version(params)
+    def parse
       params =
         ("#{@argv[1]}".scan(/(~>|>=|<)\s+(\d+(?:\.[0-9A-Za-z-]+)*)/)).flatten
       params +=
