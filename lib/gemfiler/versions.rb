@@ -20,18 +20,22 @@ module Gemfiler
       end
     end
 
-    def to_s
+    def to_a
       @versions ||= fetch_versions
       @versions.map do |ver|
-        condition_fail = @conditions.all? do |condition|
+        condition_pass = @conditions.all? do |condition|
           COMPARATORS[condition[:sign]].call(ver, condition[:ver])
         end
-        if condition_fail
-          "#{ver}".colorize(:red)
-        else
+        if condition_pass
           "#{ver}".colorize(:green)
+        else
+          "#{ver}".colorize(:red)
         end
       end
+    end
+
+    def to_s
+      to_a.join("\n")
     end
 
     def fetch_versions
