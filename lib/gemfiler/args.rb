@@ -10,6 +10,7 @@ module Gemfiler
 
     def parse
       gem_name = @argv.shift
+      validate_gem_name(gem_name)
       conditions = []
       @argv.each do |condition|
         sign, ver = condition.squeeze(' ').split(' ')
@@ -22,6 +23,12 @@ module Gemfiler
     def validate_condition!(sign, ver)
       if sign.nil? || ver.nil? || sign !~ SIGN_FORMAT || ver !~ VER_FORMAT
         raise 'Wrong conditions format'
+      end
+    end
+
+    def validate_gem_name(gem_name)
+      if gem_name.nil?
+        raise 'Wrong gem name'
       end
     end
   end
